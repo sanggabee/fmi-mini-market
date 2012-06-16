@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This is the model class for table "user".
  *
@@ -19,6 +18,10 @@
  */
 class User extends EActiveRecord
 {
+    const TYPE_ADMIN = 1;
+    const TYPE_OPERATOR = 2;
+    const TYPE_CLIENT = 3;
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -111,4 +114,35 @@ class User extends EActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    /**
+     * Generates the fill name of a user based on his first and last names.
+     *
+     * @return string
+     */
+    public function getFullName() {
+        return "$this->first_name $this->last_name";
+    }
+    
+    /**
+     * Checks wether the $password has the same hash as the one in DB.
+     *
+     * @param string $password Password to check
+     * @return boolean Comparison result.
+     */
+    public function validatePassword($password) {
+        return $this->password == $this->hashPassword($password);
+    }
+    
+    /**
+     * Hashes a given plain password.
+     *
+     * @param string $password
+     * @return string
+     */
+    public function hashPassword($password) {
+        return sha1(Yii::app()->params['userSalt'].$password);
+    }
+    
+    
 }

@@ -40,6 +40,7 @@ class Manifacturer extends EActiveRecord
 		return array(
 			array('name', 'required'),
 			array('name', 'length', 'max'=>100),
+            array('name', 'unique', 'caseSensitive'=>false),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name', 'safe', 'on'=>'search'),
