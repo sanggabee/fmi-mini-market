@@ -13,14 +13,22 @@
  * @property string $update_time
  *
  * The followings are the available model relations:
- * @property Order[] $orders
- * @property Order[] $orders1
+ * @property Order[] $orders_bought
+ * @property Order[] $orders_sold
  */
 class User extends EActiveRecord
 {
     const TYPE_ADMIN = 1;
     const TYPE_OPERATOR = 2;
     const TYPE_CLIENT = 3;
+    
+    public function getUserTypes() {
+        return array(
+            self::TYPE_ADMIN => 'Administrator',
+            self::TYPE_OPERATOR => 'Operator',
+//            self::TYPE_CLIENT => 'Client',
+        );
+    }
     
 	/**
 	 * Returns the static model of the specified AR class.
@@ -68,8 +76,8 @@ class User extends EActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'orders' => array(self::HAS_MANY, 'Order', 'client_id'),
-			'orders1' => array(self::HAS_MANY, 'Order', 'user_id'),
+			'orders_bought' => array(self::HAS_MANY, 'Order', 'client_id'),
+			'orders_sold' => array(self::HAS_MANY, 'Order', 'user_id'),
 		);
 	}
 
