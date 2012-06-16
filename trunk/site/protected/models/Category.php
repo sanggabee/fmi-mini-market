@@ -11,6 +11,7 @@
  *
  * The followings are the available model relations:
  * @property Product[] $products
+ * @property-read boolean $productsCount
  */
 class Category extends EActiveRecord
 {
@@ -68,6 +69,7 @@ class Category extends EActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+            'productsCount' => array(self::STAT, 'Product', 'category_id',),
 			'products' => array(self::HAS_MANY, 'Product', 'category_id'),
 		);
 	}
@@ -95,7 +97,7 @@ class Category extends EActiveRecord
 		// should not be searched.
 
 		$criteria=new CDbCriteria;
-
+        $criteria->with = array('productsCount');
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('name',$this->name,true);
         
@@ -103,6 +105,15 @@ class Category extends EActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    /**
+     * Checks wether the category can be deleted.
+     *
+     * @return boolean
+     */
+    public function getCanBeDeleted() {
+        return ! $this->productsCount;
+    }
     
     /**
      * Generates absolute filesystem picture path.
@@ -164,7 +175,12 @@ class Category extends EActiveRecord
         if($this->save())
             $this->_deletePicture();
     }
-    
+    protected function beforeDelete() {
+        if(!$this->canBeDeleted)
+            return false;
+        
+        return parent::beforeDelete();
+    }
     /**
      * 
      */
