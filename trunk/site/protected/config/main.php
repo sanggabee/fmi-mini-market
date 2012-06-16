@@ -14,9 +14,10 @@ return array(
 
 	// autoloading model and component classes
 	'import'=>array(
-		'application.db.*',
 		'application.models.*',
 		'application.components.*',
+		'application.validators.*',
+		'application.db.*',
 	),
 
 	'modules'=>array(
@@ -72,5 +73,6 @@ return array(
 	'params'=>array(
 		'adminEmail'=>'ndobromirov@gmail.com',
         'userSalt' => 'asdj(&^YOjsfhipawfliuhLIUYlgf92felHOg',
+        'uploadsDirectory' => 'uploads',
 	),
 );
