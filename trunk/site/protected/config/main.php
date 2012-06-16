@@ -14,6 +14,7 @@ return array(
 
 	// autoloading model and component classes
 	'import'=>array(
+		'application.db.*',
 		'application.models.*',
 		'application.components.*',
 	),
@@ -34,6 +35,7 @@ return array(
 	'components'=>array(
 		'user'=>array(
 			// enable cookie-based authentication
+            'class'=>'WebUser',
 			'allowAutoLogin'=>true,
 		),
 //		'urlManager'=>array(
@@ -69,5 +71,6 @@ return array(
 	// application-level parameters that can be accessed
 	'params'=>array(
 		'adminEmail'=>'ndobromirov@gmail.com',
+        'userSalt' => 'asdj(&^YOjsfhipawfliuhLIUYlgf92felHOg',
 	),
 );
