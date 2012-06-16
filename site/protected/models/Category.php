@@ -39,10 +39,21 @@ class Category extends EActiveRecord
 	{
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
+        
+        // #abcdef
 		return array(
-			array('name, colour, picture', 'required'),
+			array('name, colour', 'required'),
 			array('name, colour', 'length', 'max'=>45),
+            array('colour', 'match', 'pattern'=>'/^#[a-f0-9]{6,6}$/ui'),
+            array('colour', 'unique'),
 			array('picture', 'length', 'max'=>255),
+			array('picture', 'EImageValidator', 
+                'maxSize'=>1024 * 1024 * 2, 
+//                'maxWidth' => 200, 
+//                'maxHeight' => 200, 
+                'tooLarge'=>'Uploaded file is larger than 2 MB!',
+                'allowEmpty' => $this->scenario != 'insert',
+            ),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name, colour, picture', 'safe', 'on'=>'search'),
@@ -87,11 +98,85 @@ class Category extends EActiveRecord
 
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('colour',$this->colour,true);
-		$criteria->compare('picture',$this->picture,true);
-
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
+    
+    /**
+     * Generates absolute filesystem picture path.
+     *
+     * @param string $name Optional name for the picture. Defaults to null -> using picture property;
+     * @return string 
+     */
+    public function getPicturePath($name) {
+        return $this->_getPicturepath(Yii::getPathOfAlias('webroot'), DIRECTORY_SEPARATOR, $name);
+    }
+    
+    /**
+     * Generates picture URL.
+     * 
+     * @param boolean $absolute Wether to generate absolute URL. Defaults to false.
+     * @return string 
+     */
+    public function getPictureUrl($absolute = false) {
+        return $this->_getPicturepath(Yii::app()->getBaseUrl($absolute), '/');
+    }
+    
+    /**
+     * Private helper method for generating picture paths.
+     *
+     * @param string $initial Initial part of the path(path to web root for example).
+     * @param string $ds Directory separator
+     * @param type $name Optional name for the picture.
+     * @return type 
+     */
+    private function _getPicturepath($initial, $ds, $name=null)
+    {
+        if($name === null)
+            $name = $this->picture;
+        
+        $directory = $initial . $ds . Yii::app()->params['uploadsDirectory'] . $ds . __CLASS__;
+        return $directory . $ds . $name;
+    }
+    
+    public function beforeValidate() {
+        if(in_array($this->scenario, array('insert', 'update')))
+            $this->picture = CUploadedFile::getInstance($this, 'picture');
+        
+        return parent::beforeValidate();
+    }
+    
+    public function afterSave() {
+        
+        if($this->picture instanceof CUploadedFile && $this->picture->error == UPLOAD_ERR_OK){
+            $name = "picture{$this->id}.{$this->picture->extensionName}";
+            $this->picture->saveAs($this->getPicturePath($name));
+            $this->updateByPk($this->id, array('picture'=>$name,));
+        }
+        parent::afterSave();
+    }
+    
+    public function removePicture() {
+        $this->setScenario('removePicture');
+        $this->picture = null;
+        if($this->save())
+            $this->_deletePicture();
+    }
+    
+    /**
+     * 
+     */
+    public function afterDelete() {
+        $this->_deletePicture();
+        parent::afterDelete();
+    }
+    
+    /**
+     * Delete picture as a file.
+     */
+    private function _deletePicture() {
+        @unlink($this->getPicturePath());
+    }
 }
