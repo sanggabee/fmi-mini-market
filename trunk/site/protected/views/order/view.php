@@ -20,11 +20,11 @@ $this->menu=array(
     ),
 	array(
         'label'=>'Finish Order', 
-        'url'=>'javascript:;', 
+        'url'=>array('finish', 'id'=>$model->id), 
         'linkOptions'=>array(
-            'submit'=>array('finish', 'id'=>$model->id), 
-            'confirm'=>'Are you shure you want to finish the order?',
+            'class'=>'finish-link',
         ),
+        'visible'=>$model->isNew,
     ),
     
     array(
@@ -141,4 +141,16 @@ $this->widget('zii.widgets.grid.CGridView', array(
         }
         
         ", CClientScript::POS_HEAD)
-    ->registerScript('manageDialog', "rebindOrderItemButtons();", CClientScript::POS_READY); ?>
+    ->registerScript('manageDialog', "
+        rebindOrderItemButtons();
+        
+        $('.finish-link').click(function(){
+            var link = $(this);
+            $.post(link.attr('href'), function(r){
+                alert(r.error == 0 ? 'Success' : r.message);
+                if(r.error == 0)
+                    link.remove();
+            }, 'json');
+            return false;
+        });
+    ", CClientScript::POS_READY); ?>

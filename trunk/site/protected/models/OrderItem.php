@@ -121,7 +121,7 @@ class OrderItem extends EActiveRecord
     public function changeProductQuantity() {
         $changeBy = $this->order->applyStorigedirection($this->quantity);
         if($this->product->current_quantity + $changeBy < 0)
-            throw new CException('Not enough quantity in product.');
+            throw new Exception("Not enough quantity in product {$this->product->name}.");
         
         return $this->product->saveCounters(array(
             'current_quantity' => $changeBy,
