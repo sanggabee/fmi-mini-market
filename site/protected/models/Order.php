@@ -54,8 +54,8 @@ class Order extends EActiveRecord
         $stateNames = array_values($this->getStates());
         if(preg_match('/^is('.implode('|', $stateNames).')$/ui', $name, $matches))
         {
-            $index = array_search($matches[1], $typeNames);
-            $states = array_keys($stateNames);
+            $index = array_search($matches[1], $stateNames);
+            $states = array_keys($this->getStates());
             return $this->state == $states[$index];
         }
         return parent::__get($name);

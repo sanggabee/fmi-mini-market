@@ -15,7 +15,7 @@ class OrderStateNew extends OrderState {
     public function finish() {
         $transaction = $this->order->getDbConnection()->beginTransaction();
         try {
-            foreach($this->order->orderItems as $orderItem)
+            foreach($this->order->orderItems as $orderItem) /* @var $orderItem OrderItem */
                 if(!$orderItem->changeProductQuantity())
                     throw new Exception('Can not change product quantity!');
         
@@ -30,6 +30,7 @@ class OrderStateNew extends OrderState {
         } catch (Exception $e) {
             $transaction->rollback();
             $this->order->state = Order::STATE_NEW;
+            $this->order->addError('state', $e->getMessage());
             return false;
         }
         return true;

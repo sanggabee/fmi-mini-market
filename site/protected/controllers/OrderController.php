@@ -35,13 +35,17 @@ class OrderController extends Controller
     {
         if(Yii::App()->request->isPostRequest)
         {
-            $model = $this->loadModel($id)->finish();
-            
-            if(!Yii::app()->request->isAjaxRequest)
-                $this->redirect(array('view', 'id'=>$id));
+            $model = $this->loadModel($id);
+            if($model->finish())
+                echo CJSON::encode(array('error'=>0,));
+            else
+                echo CJSON::encode (array(
+                    'error'=>1,
+                    'message' => Yii::t('app',$model->getError('state')),
+                ));
         }
         else
-            throw new CHttpException(404, 'Invalid page request!');
+            throw new CHttpException(400, 'Invalid page request!');
     }
 
 	/**
