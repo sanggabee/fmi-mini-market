@@ -99,4 +99,13 @@ class OrderItem extends EActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    public function getSinglePrize() {
+        $name = $this->order->getProductPrizeAttribute();
+        return $this->product->getAttribute($name);
+    }
+    
+    public function getRowTotal() {
+        return $this->quantity * $this->singlePrize;
+    }
 }

@@ -22,4 +22,8 @@ class DeliveryOrder extends Order
         return array_merge(parent::behaviors(), array(
         ));
     }
+    
+    public function getProductPrizeAttribute() {
+        return 'delivery_prize';
+    }
 }
