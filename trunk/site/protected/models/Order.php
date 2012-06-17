@@ -33,6 +33,10 @@ class Order extends EActiveRecord
         );
     }
     
+    public function getTypeName() {
+        return $this->types[$this->type];
+    }
+    
     private function getTypeClassMap() {
         return array(
             self::TYPE_DELIVERY => 'DeliveryOrder',
@@ -40,6 +44,12 @@ class Order extends EActiveRecord
         );
     }
     
+    /**
+     * Add Support for checking states with properties like isNew and isFinished.
+     * 
+     * @param string $name 
+     * @return mixed Depends on Name.
+     */
     public function __get($name) {
         $stateNames = array_values($this->getStates());
         if(preg_match('/^is('.implode('|', $stateNames).')$/ui', $name, $matches))
@@ -51,6 +61,20 @@ class Order extends EActiveRecord
         return parent::__get($name);
     }
     
+    /**
+     * Gets the name of the current state.
+     *
+     * @return string
+     */
+    public function getStateName() {
+        return $this->states[$this->state];
+    }
+    
+    /**
+     * Returns a list of the states asociated with theier names.
+     *
+     * @return array
+     */
     public function getStates() {
         return array(
             self::STATE_NEW => 'New',
@@ -118,12 +142,14 @@ class Order extends EActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('type, user_id, total', 'required'),
-			array('type, user_id, client_id, total', 'length', 'max'=>10),
-			array('create_time, update_time', 'safe'),
+			array('type,', 'required'),
+			array('type, client_id, total', 'length', 'max'=>10),
+            array('type', 'in', 'range' => array_keys($this->types)),
+            array('client_id', 'exists', 'className' =>'User', 'attributeName'=>'id', 'allowEmpty'=>true,),
+			array('state, user_id, create_time, update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, state, type, user_id, client_id, total, create_time, update_time', 'safe', 'on'=>'search'),
+			array('id, type, client_id, total', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -178,4 +204,36 @@ class Order extends EActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    protected function beforeSave() {
+        if($this->scenario == 'insert')
+            $this->user_id = Yii::app()->user->id;
+        
+        return parent::beforeSave();
+    }
+    
+    public function generateTotal() {
+        return $this
+            ->getDbConnection()
+            ->createCommand()
+            ->select("sum(p.{$this->getProductPrizeAttribute()} * i.quantity)")
+            ->from(OrderItem::model()->tableName().' i')
+            ->join(Product::model()->tableName(). ' p', 'p.id = i.product_id')
+            ->where('i.order_id=:order_id', array(
+                ':order_id'=>$this->id,
+            ))
+            ->queryScalar();
+    }
+    
+    public function getProductPrizeAttribute() {
+        throw new CException('Use a derived class!');
+    }
+    
+    public function getNewItem()
+    {
+        $item = new OrderItem;
+        $item->order = $this;
+        $item->order_id = $this->id;
+        return $item;
+    }
 }

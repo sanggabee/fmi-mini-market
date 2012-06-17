@@ -1,6 +1,6 @@
 <?php
 
-class OrderController extends Controller
+class OrderItemController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -37,11 +37,8 @@ class OrderController extends Controller
 	 */
 	public function actionView($id)
 	{
-        $model = $this->loadModel($id);
-        $item = $model->newItem;
 		$this->render('view',array(
-			'model'=>$model,
-            'item' => $item,
+			'model'=>$this->loadModel($id),
 		));
 	}
 
@@ -51,14 +48,14 @@ class OrderController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Order;
+		$model=new OrderItem;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Order']))
+		if(isset($_POST['OrderItem']))
 		{
-			$model->attributes=$_POST['Order'];
+			$model->attributes=$_POST['OrderItem'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -80,9 +77,9 @@ class OrderController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Order']))
+		if(isset($_POST['OrderItem']))
 		{
-			$model->attributes=$_POST['Order'];
+			$model->attributes=$_POST['OrderItem'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -115,8 +112,12 @@ class OrderController extends Controller
 	/**
 	 * Lists all models.
 	 */
-	public function actionIndex() {
-		$this->redirect(array('admin'));
+	public function actionIndex()
+	{
+		$dataProvider=new CActiveDataProvider('OrderItem');
+		$this->render('index',array(
+			'dataProvider'=>$dataProvider,
+		));
 	}
 
 	/**
@@ -124,10 +125,10 @@ class OrderController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Order('search');
+		$model=new OrderItem('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Order']))
-			$model->attributes=$_GET['Order'];
+		if(isset($_GET['OrderItem']))
+			$model->attributes=$_GET['OrderItem'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -141,7 +142,7 @@ class OrderController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=Order::model()->findByPk($id);
+		$model=OrderItem::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -153,7 +154,7 @@ class OrderController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='order-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='order-item-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
