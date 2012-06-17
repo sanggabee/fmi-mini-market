@@ -17,6 +17,8 @@ return array(
 		'application.models.*',
 		'application.components.*',
 		'application.validators.*',
+        'application.extensions.StateMachine.*',
+		'application.states.*',
 		'application.db.*',
 	),
 
