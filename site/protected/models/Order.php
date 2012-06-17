@@ -6,11 +6,16 @@
  * The followings are the available columns in table 'order':
  * @property string $id
  * @property string $type
+ * @property string $state
  * @property string $user_id
  * @property string $client_id
  * @property string $total
  * @property string $create_time
+ * @property string $update_time
  *
+ * @property-read boolean $isNew
+ * @property-read boolean $isFinished
+ * 
  * The followings are the available model relations:
  * @property User $client
  * @property User $user
@@ -18,6 +23,75 @@
  */
 class Order extends EActiveRecord
 {
+    const TYPE_SALE = 1;
+    const TYPE_DELIVERY = 2;
+    
+    public function getTypes() {
+        return array(
+            self::TYPE_SALE => 'Sales',
+            self::TYPE_DELIVERY => 'Delivery',
+        );
+    }
+    
+    private function getTypeClassMap() {
+        return array(
+            self::TYPE_DELIVERY => 'DeliveryOrder',
+            self::TYPE_SALE => 'SalesOrder',
+        );
+    }
+    
+    public function __get($name) {
+        $stateNames = array_values($this->getStates());
+        if(preg_match('/^is('.implode('|', $stateNames).')$/ui', $name, $matches))
+        {
+            $index = array_search($matches[1], $typeNames);
+            $states = array_keys($stateNames);
+            return $this->state == $states[$index];
+        }
+        return parent::__get($name);
+    }
+    
+    public function getStates() {
+        return array(
+            self::STATE_NEW => 'New',
+            self::STATE_FINISHED => 'Finished',
+        );
+    }
+    
+    const STATE_NEW = 1;
+    const STATE_FINISHED = 2;
+    
+    public function behaviors() {
+        return array(
+            'CTimestampBehavior' => array(
+                'class' => 'zii.behaviors.CTimestampBehavior',
+                'setUpdateOnCreate' => true,
+            ),
+            'currentStatus' => array(
+                'class' => 'AStateMachine',
+                'defaultStateName' => self::STATE_NEW,
+                'statename' => $this->state,
+                'states' => array(
+                    array(
+                        'class' => 'OrderStateNew',
+                        'name' => self::STATE_NEW,
+                    ),
+                    array(
+                        'class' => 'OrderStateFinihed',
+                        'name' => self::STATE_FINISHED,
+                    ),
+                ),
+            ),
+        );
+    }
+    
+    protected function instantiate($attributes) {
+        $classes = $this->getTypeClassMap();
+        $class = $classes[$attributes['type']];
+        $model = new $class(null);
+        return $model;
+    }
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -46,10 +120,10 @@ class Order extends EActiveRecord
 		return array(
 			array('type, user_id, total', 'required'),
 			array('type, user_id, client_id, total', 'length', 'max'=>10),
-			array('create_time', 'safe'),
+			array('create_time, update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, type, user_id, client_id, total, create_time', 'safe', 'on'=>'search'),
+			array('id, state, type, user_id, client_id, total, create_time, update_time', 'safe', 'on'=>'search'),
 		);
 	}
 
