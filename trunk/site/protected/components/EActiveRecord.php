@@ -3,6 +3,7 @@
  * Common class for all CActive record models.
  * Will allow easy overall functionality addition.
  *
+ * @property-read array $listData
  * @author nikolay
  */
 class EActiveRecord extends CActiveRecord {
@@ -23,5 +24,29 @@ class EActiveRecord extends CActiveRecord {
             'params' => array(":$attribue" => $value),
         )));
         return $this;
+    }
+    
+    /**
+     * Returns list data that can be used in dorpDownList activeDropdownList, etc.
+     *
+     * @return array
+     */
+    public function getListData() {
+        return $this->getListDataHelper('id', 'name');
+    }
+    
+    /**
+     * Generates a drop down list data.
+     *
+     * @param string $valueAttribute
+     * @param strign $labelAttribute
+     * @return array
+     */
+    protected function getListDataHelper($valueAttribute, $labelAttribute) {
+        $models = $this->findAll(array(
+            'select'=>"$valueAttribute, $labelAttribute",
+            'order' => "$labelAttribute asc",
+        ));
+        return CHtml::listData($models, $valueAttribute, $labelAttribute);
     }
 }

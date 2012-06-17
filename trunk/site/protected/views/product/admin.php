@@ -5,7 +5,6 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Product', 'url'=>array('index')),
 	array('label'=>'Create Product', 'url'=>array('create')),
 );
 
@@ -34,6 +33,9 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
 	'model'=>$model,
+    'manifacturers' => $manifacturers,
+    'categories' => $categories,
+    'measures' => $measures,
 )); ?>
 </div><!-- search-form -->
 
@@ -43,20 +45,29 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
-		'category_id',
-		'manifacturer_id',
-		'measure_id',
+        array(
+            'name' => 'category_id',
+            'value' => '$data->category->name',
+            'filter' => $categories,
+        ),
+        array(
+            'name'=>'manifacturer_id',
+            'value'=>'$data->manifacturer->name',
+            'filter'=>  $manifacturers,
+        ),
+        array(
+            'name'=>'measure_id',
+            'value'=>'$data->measure->name_short',
+            'filter'=> $measures,
+        ),
+		
 		'name',
 		'delivery_prize',
-		/*
 		'sell_prize',
 		'current_quantity',
-		'minimum_quantity',
-		'create_time',
-		'update_time',
-		*/
 		array(
 			'class'=>'CButtonColumn',
+            'template'=>'{update}{delete}',
 		),
 	),
 )); ?>
