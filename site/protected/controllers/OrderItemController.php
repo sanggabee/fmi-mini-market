@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @property-read Order $order
+ */
 class OrderItemController extends Controller
 {
 	/**
@@ -8,6 +11,8 @@ class OrderItemController extends Controller
 	 */
 	public $layout='//layouts/column2';
 
+    private $_order;
+    
 	/**
 	 * @return array action filters
 	 */
@@ -15,8 +20,38 @@ class OrderItemController extends Controller
 	{
 		return array(
 			'accessControl', // perform access control for CRUD operations
+            'preloadOrder + create',
 		);
 	}
+    
+    /**
+     * Lazy loading of order.
+     * Order ID should be passed from a parameter.
+     *
+     * @return type 
+     */
+    public function getOrder()
+    {
+        if($this->_order === null)
+        {
+            $orderId = Yii::App()->request->getParam('order_id');
+            $this->_order = Order::model()->findByPk($orderId);
+        }
+        return $this->_order;
+    }
+    
+    /**
+     * Filters requests that are not passing order_id as a parameter.
+     *
+     * @param CFilterChain $filterchain 
+     */
+    public function filterPreloadOrder($filterchain)
+    {
+        if($this->order === null)
+            throw new CHttpException(403,'Invalid request!');
+        
+        $filterchain->run();
+    }
 
 	/**
 	 * Specifies the access control rules.
@@ -48,19 +83,25 @@ class OrderItemController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new OrderItem;
+        $this->layout = false;
+		$model=$this->order->newItem;
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['OrderItem']))
 		{
 			$model->attributes=$_POST['OrderItem'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+            {
+                $message = Yii::t('app', 'Successfuly created {item_name}!', array(
+                    '{item_name}' => Yii::t('app', 'order item'),
+                ));
+                $this->user->setFlash('success', $message);
+                $this->refresh();
+            }
 		}
 
-		$this->render('create',array(
+		$this->render('_form',array(
 			'model'=>$model,
 		));
 	}
@@ -72,6 +113,7 @@ class OrderItemController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+        $this->layout = false;
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -81,10 +123,16 @@ class OrderItemController extends Controller
 		{
 			$model->attributes=$_POST['OrderItem'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+            {
+                $message = Yii::t('app', 'Successfuly updated {item_name}!', array(
+                    '{item_name}' => Yii::t('app', 'order item'),
+                ));
+                $this->user->setFlash('success', $message);
+                $this->refresh();
+            }
 		}
 
-		$this->render('update',array(
+		$this->render('_form',array(
 			'model'=>$model,
 		));
 	}

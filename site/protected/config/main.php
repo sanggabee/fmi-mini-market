@@ -20,6 +20,7 @@ return array(
         'application.extensions.StateMachine.*',
 		'application.states.*',
 		'application.db.*',
+		'application.widgets.*',
 	),
 
 	'modules'=>array(

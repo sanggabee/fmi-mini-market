@@ -1,11 +1,9 @@
 <?php /* @var $this Controller */ ?>
 <?php /* @var $model Category */ ?>
 
-<?php if($this->user->hasFlash('success')): ?>
-    <div class="success"><?php echo $this->user->getFlash('success'); ?></div>
-<?php endif; ?>
-
 <div class="form">
+
+<?php $this->widget('FlashMessage',array('key'=>'success')); ?>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'category-form',

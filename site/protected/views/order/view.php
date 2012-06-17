@@ -1,5 +1,6 @@
 <?php
 /* @var $model Order */
+/* @var $item OrderItem */
 
 $this->breadcrumbs=array(
 	'Orders'=>array('index'),
@@ -7,11 +8,33 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Order', 'url'=>array('index')),
+	array('label'=>'Manage Orders', 'url'=>array('admin')),
 	array('label'=>'Create Order', 'url'=>array('create')),
-	array('label'=>'Update Order', 'url'=>array('update', 'id'=>$model->id)),
-	array('label'=>'Delete Order', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
-	array('label'=>'Manage Order', 'url'=>array('admin')),
+	array(
+        'label'=>'Delete Order', 
+        'url'=>'javascript:;', 
+        'linkOptions'=>array(
+            'submit'=>array('delete','id'=>$model->id),
+            'confirm'=>'Are you sure you want to delete this item?',
+        )
+    ),
+	array(
+        'label'=>'Finish Order', 
+        'url'=>'javascript:;', 
+        'linkOptions'=>array(
+            'submit'=>array('finish', 'id'=>$model->id), 
+            'confirm'=>'Are you shure you want to finish the order?',
+        ),
+    ),
+    
+    array(
+        'label'=>'Add order item', 
+        'url'=>array('orderItem/create', 'order_id'=>$model->id), 
+        'linkOptions'=>array(
+            'class'=>'order-item-click',
+            'rel'=>'Add order item',
+        )
+    ),
 );
 ?>
 
@@ -30,15 +53,16 @@ $this->menu=array(
             'name'=>'typeName',
         ),
 		'user.fullName',
-		'total',
 		'create_time',
 		'update_time',
 	),
 )); ?>
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
-    'id' => 'order-items',
-    'dataProvider' => $item->search(),
+<?php $provider=$item->search();
+$this->widget('zii.widgets.grid.CGridView', array(
+    'id' => 'order-items-grid',
+    'dataProvider' => $provider,
+    'afterAjaxUpdate' => 'rebindOrderItemButtons',
     'columns'=>array(
         array(
             'name' =>'N',
@@ -56,11 +80,19 @@ $this->menu=array(
         array(
             'name' => 'rowTotal',
             'value' => '$data->rowTotal',
+            'footer' => $provider->itemCount === 0 ? '' : $model->getTotal(),
         ),
         array(
             'class'=>'CButtonColumn',
             'template'=>'{update}{delete}',
             'buttons'=>array(
+                'update'=>array(
+                    'url'=>'Yii::app()->createUrl("orderItem/update", array("id"=>$data->id));',
+                    'options'=>array(
+                        'class'=>'order-item-click',
+                        'alt'=>'Update order item',
+                    ),
+                ),
                 'delete'=>array(
                     'url'=>'Yii::app()->createUrl("orderItem/delete", array("id"=>$data->id));',
                 ),
@@ -68,3 +100,45 @@ $this->menu=array(
         ),
     ),
 )); ?>
+
+<?php $this->widget('zii.widgets.jui.CJuiDialog', array(
+    'id'=>'order-item-dialog',
+    'options'=>array(
+        'title'=>'Order Item Dialog',
+        'autoOpen'=>false,
+        'modal' => true,
+    ),
+)); ?>
+
+<?php Yii::app()->clientScript
+    ->registerScript('buttons-rebind-function',"
+        function refreshGrid(){
+            $.fn.yiiGridView.update('order-items-grid');
+        }
+        function rebindOrderItemButtons(){
+            $('.order-item-click').click(function(){
+                var dialog = $('#order-item-dialog');
+                var link = $(this);
+                $.get(link.attr('href'), function(html){
+                    dialog.html(html);
+                    dialog.dialog('option', 'title', link.attr('alt'));
+                    function bindOrderItemFormButton(){
+                        $('#order-item-form').submit(function(){
+                            var form = $(this);
+                            $.post(form.attr('action'), form.serialize(), function(html){
+                                dialog.html(html);
+                                bindOrderItemFormButton();
+                                refreshGrid();
+                            });
+                            return false;
+                        });
+                    }
+                    bindOrderItemFormButton();
+                    dialog.dialog('open');
+                });
+                return false;
+            });
+        }
+        
+        ", CClientScript::POS_HEAD)
+    ->registerScript('manageDialog', "rebindOrderItemButtons();", CClientScript::POS_READY); ?>

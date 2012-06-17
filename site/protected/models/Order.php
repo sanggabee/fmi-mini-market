@@ -236,4 +236,23 @@ class Order extends EActiveRecord
         $item->order_id = $this->id;
         return $item;
     }
+    
+    public function getTotal()
+    {
+        $sum = 0;
+        foreach($this->orderItems as $item) /* @var $item OrderItem */
+            $sum += $item->rowTotal;
+        
+        if($this->total != $sum)
+        {
+            $this->total = $sum;
+            $this->save();
+        }
+        
+        return $sum;
+    }
+    
+    public function applyStorigeDirection($quota) {
+        throw new CException('Implemented in derived class!!!');
+    }
 }

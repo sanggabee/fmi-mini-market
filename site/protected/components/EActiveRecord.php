@@ -49,4 +49,17 @@ class EActiveRecord extends CActiveRecord {
         ));
         return CHtml::listData($models, $valueAttribute, $labelAttribute);
     }
+    
+    /**
+     * Extracts all errors generated in a given $model( different from $this ) 
+     * and places them as errors in a specified attribute.
+     * 
+     * @param mixed $model Some model instance
+     * @param string $attribute 
+     */
+    protected function proxyErrors($model, $attribute) {
+        foreach($model->errors as $fieldErrors)
+            foreach($fieldErrors as $error)
+                $this->addError($attribute, $error);
+    }
 }

@@ -1,9 +1,12 @@
+<?php /* @var $this Controller */ ?>
 <div class="form">
-
+   
+<?php $this->widget('FlashMessage',array('key'=>'success')); ?>
+    
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'order-item-form',
 	'enableAjaxValidation'=>false,
-)); ?>
+)); /* @var $form CActiveForm */ ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
@@ -11,26 +14,14 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'product_id'); ?>
-		<?php echo $form->textField($model,'product_id',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->dropDownList($model,'product_id', Product::model()->listData); ?>
 		<?php echo $form->error($model,'product_id'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'order_id'); ?>
-		<?php echo $form->textField($model,'order_id',array('size'=>10,'maxlength'=>10)); ?>
-		<?php echo $form->error($model,'order_id'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'quantity'); ?>
 		<?php echo $form->textField($model,'quantity',array('size'=>10,'maxlength'=>10)); ?>
 		<?php echo $form->error($model,'quantity'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'create_time'); ?>
-		<?php echo $form->textField($model,'create_time',array('size'=>45,'maxlength'=>45)); ?>
-		<?php echo $form->error($model,'create_time'); ?>
 	</div>
 
 	<div class="row buttons">

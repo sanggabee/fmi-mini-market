@@ -1,9 +1,7 @@
 <?php /* @var $this Controller */ ?>
 <div class="form">
 
-<?php if($this->user->hasFlash('success')): ?>
-    <div class="success"><?php echo $this->user->getFlash('success'); ?></div>
-<?php endif; ?>
+<?php $this->widget('FlashMessage',array('key'=>'success')); ?>
     
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'product-form',
