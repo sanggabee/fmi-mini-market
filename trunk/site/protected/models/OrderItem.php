@@ -108,4 +108,23 @@ class OrderItem extends EActiveRecord
     public function getRowTotal() {
         return $this->quantity * $this->singlePrize;
     }
+    
+    public function behaviors() {
+        return array(
+            'CTimestampBehavior' => array(
+                'class' => 'zii.behaviors.CTimestampBehavior',
+                'updateAttribute' => null,
+            ),
+        );
+    }
+    
+    public function changeProductQuantity() {
+        $changeBy = $this->order->applyStorigedirection($this->quantity);
+        if($this->product->current_quantity + $changeBy < 0)
+            throw new CException('Not enough quantity in product.');
+        
+        return $this->product->saveCounters(array(
+            'current_quantity' => $changeBy,
+        ));
+    }
 }

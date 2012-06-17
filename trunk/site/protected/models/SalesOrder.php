@@ -26,4 +26,8 @@ class SalesOrder extends Order
     public function getProductPrizeAttribute() {
         return 'sell_prize';
     }
+    
+    public function applyStorigeDirection($quota) {
+        return -$quota;
+    }
 }

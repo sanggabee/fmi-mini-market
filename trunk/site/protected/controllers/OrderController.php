@@ -30,6 +30,19 @@ class OrderController extends Controller
 			array('deny', 'users'=>array('*'),),
 		);
 	}
+    
+    public function actionFinish($id)
+    {
+        if(Yii::App()->request->isPostRequest)
+        {
+            $model = $this->loadModel($id)->finish();
+            
+            if(!Yii::app()->request->isAjaxRequest)
+                $this->redirect(array('view', 'id'=>$id));
+        }
+        else
+            throw new CHttpException(404, 'Invalid page request!');
+    }
 
 	/**
 	 * Displays a particular model.

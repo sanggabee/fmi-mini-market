@@ -1,11 +1,6 @@
-
-<?php if(Yii::app()->user->hasFlash('success')):?>
-    <div class="success">
-        <?php echo Yii::app()->user->getFlash('success'); ?>
-    </div>
-<?php endif; ?>
-
+<?php /* @var $this Controller */ ?>
 <div class="form">
+<?php $this->widget('FlashMessage',array('key'=>'success')); ?>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'manifacturer-form',

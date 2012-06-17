@@ -26,4 +26,8 @@ class DeliveryOrder extends Order
     public function getProductPrizeAttribute() {
         return 'delivery_prize';
     }
+    
+    public function applyStorigeDirection($quota) {
+        return $quota;
+    }
 }

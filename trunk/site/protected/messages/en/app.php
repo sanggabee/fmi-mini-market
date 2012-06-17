@@ -4,4 +4,6 @@
     'product' => 'product',
     'category' => 'category',
     'manifacturer' => 'manifacturer',
+    'order item' => 'order item',
+    
 );
