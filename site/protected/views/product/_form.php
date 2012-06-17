@@ -1,9 +1,14 @@
+<?php /* @var $this Controller */ ?>
 <div class="form">
 
+<?php if($this->user->hasFlash('success')): ?>
+    <div class="success"><?php echo $this->user->getFlash('success'); ?></div>
+<?php endif; ?>
+    
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'product-form',
 	'enableAjaxValidation'=>false,
-)); ?>
+)); /* @var $form CActiveForm */?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
@@ -11,19 +16,19 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'category_id'); ?>
-		<?php echo $form->textField($model,'category_id',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->dropDownList($model,'category_id', $categories); ?>
 		<?php echo $form->error($model,'category_id'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'manifacturer_id'); ?>
-		<?php echo $form->textField($model,'manifacturer_id',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->dropDownList($model,'manifacturer_id',$manifacturers); ?>
 		<?php echo $form->error($model,'manifacturer_id'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'measure_id'); ?>
-		<?php echo $form->textField($model,'measure_id',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->dropDownList($model,'measure_id',$measures); ?>
 		<?php echo $form->error($model,'measure_id'); ?>
 	</div>
 
@@ -55,18 +60,6 @@
 		<?php echo $form->labelEx($model,'minimum_quantity'); ?>
 		<?php echo $form->textField($model,'minimum_quantity',array('size'=>10,'maxlength'=>10)); ?>
 		<?php echo $form->error($model,'minimum_quantity'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'create_time'); ?>
-		<?php echo $form->textField($model,'create_time'); ?>
-		<?php echo $form->error($model,'create_time'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'update_time'); ?>
-		<?php echo $form->textField($model,'update_time'); ?>
-		<?php echo $form->error($model,'update_time'); ?>
 	</div>
 
 	<div class="row buttons">

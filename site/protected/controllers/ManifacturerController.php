@@ -56,7 +56,10 @@ class ManifacturerController extends Controller
 		{
 			$model->attributes=$_POST['Manifacturer'];
 			if($model->save()) {
-                Yii::app()->user->setFlash('success', "Successfuly added manifacturer `$model->name`!");
+                $message = Yii::t('app', 'Successfuly created {item_name}!', array(
+                    '{item_name}' => Yii::t('app', 'manifacturer'),
+                ));
+                $this->user->setFlash('success', $message);
                 $this->refresh();
             }
 		}
@@ -81,7 +84,10 @@ class ManifacturerController extends Controller
 		{
 			$model->attributes=$_POST['Manifacturer'];
 			if($model->save()) {
-                Yii::app()->user->setFlash('success', "Successfuly modified manifacturer `$model->name`!");
+                $message = Yii::t('app', 'Successfuly updated {item_name}!', array(
+                    '{item_name}' => Yii::t('app', 'manifacturer'),
+                ));
+                $this->user->setFlash('success', $message);
                 $this->refresh();
             }
 		}

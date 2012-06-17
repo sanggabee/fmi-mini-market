@@ -1,6 +1,6 @@
 <?php
 
-class CategoryController extends Controller
+class ProductController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -26,20 +26,9 @@ class CategoryController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow', 'expression' => '$user->isAdmin',),
-			array('deny', 'users'=>array('*'), ),
+			array('allow', 'expression' => '$user->isAdmin || $user->isOperator',),
+			array('deny', 'users'=>array('*'),),
 		);
-	}
-
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionView($id)
-	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
 	}
 
 	/**
@@ -48,38 +37,26 @@ class CategoryController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Category;
-
-		// Uncomment the following line if AJAX validation is needed
+		$model=new Product;
 		$this->performAjaxValidation($model);
-
-		if(isset($_POST['Category']))
+        
+		if(isset($_POST['Product']))
 		{
-			$model->attributes=$_POST['Category'];
+			$model->attributes=$_POST['Product'];
 			if($model->save())
             {
                 $message = Yii::t('app', 'Successfuly created {item_name}!', array(
-                    '{item_name}' => Yii::t('app', 'category'),
+                    '{item_name}' => Yii::t('app', 'product'),
                 ));
                 $this->user->setFlash('success', $message);
                 $this->refresh();
             }
 		}
-
-		$this->render('create',array(
+        
+        $this->render('create', array_merge($this->getNeededDataLists(), array(
 			'model'=>$model,
-		));
+		)));
 	}
-    
-    public function actionDeletePicture($id)
-    {
-        $this->layout = false;
-        $model = $this->loadModel($id);
-        $model->removePicture();
-        $this->render('_picture', array(
-            'model'=>$model,
-        ));
-    }
 
 	/**
 	 * Updates a particular model.
@@ -92,22 +69,22 @@ class CategoryController extends Controller
 
 		$this->performAjaxValidation($model);
 
-		if(isset($_POST['Category']))
+		if(isset($_POST['Product']))
 		{
-			$model->attributes=$_POST['Category'];
+			$model->attributes=$_POST['Product'];
 			if($model->save())
             {
-                $message = Yii::t('app', 'Successfuly updated {item_name}!', array(
-                    '{item_name}' => Yii::t('app', 'category'),
+				$message = Yii::t('app', 'Successfuly updated {item_name}!', array(
+                    '{item_name}' => Yii::t('app', 'product'),
                 ));
                 $this->user->setFlash('success', $message);
                 $this->refresh();
             }
 		}
 
-		$this->render('update',array(
+		$this->render('update', array_merge($this->getNeededDataLists(), array(
 			'model'=>$model,
-		));
+		)));
 	}
 
 	/**
@@ -143,25 +120,25 @@ class CategoryController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Category('search');
+		$model=new Product('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Category']))
-			$model->attributes=$_GET['Category'];
+		if(isset($_GET['Product']))
+			$model->attributes=$_GET['Product'];
 
-		$this->render('admin',array(
+        $this->render('admin', array_merge($this->getNeededDataLists(), array(
 			'model'=>$model,
-		));
+		)));
 	}
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
-     * @return Category
+     * @return Product
 	 */
 	public function loadModel($id)
 	{
-		$model=Category::model()->findByPk($id);
+		$model=Product::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
         
@@ -174,10 +151,25 @@ class CategoryController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='category-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='product-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
 	}
+    
+    /**
+     * Helper method used in update, create and andmin actions for 
+     * extracting select boxes data for manifacturer, category and measure.
+     *
+     * @return array
+     */
+    private function getNeededDataLists() 
+    {
+        return array(
+            'manifacturers' => Manifacturer::model()->listData,
+            'categories' => Category::model()->listData,
+            'measures' => Measure::model()->listData,
+        );
+    }
 }

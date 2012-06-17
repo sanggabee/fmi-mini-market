@@ -74,5 +74,6 @@ return array(
 		'adminEmail'=>'ndobromirov@gmail.com',
         'userSalt' => 'asdj(&^YOjsfhipawfliuhLIUYlgf92felHOg',
         'uploadsDirectory' => 'uploads',
+        'dbDateFormat'=>'Y-m-d H:i:s',
 	),
 );

@@ -3,7 +3,7 @@
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'action'=>Yii::app()->createUrl($this->route),
 	'method'=>'get',
-)); ?>
+)); /* @var $form CActiveForm */?>
 
 	<div class="row">
 		<?php echo $form->label($model,'id'); ?>
@@ -12,17 +12,17 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'category_id'); ?>
-		<?php echo $form->textField($model,'category_id',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->dropDownList($model, 'category_id', $categories, array('empty'=>'')); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'manifacturer_id'); ?>
-		<?php echo $form->textField($model,'manifacturer_id',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->dropDownList($model, 'manifacturer_id', $manifacturers, array('empty'=>'')); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'measure_id'); ?>
-		<?php echo $form->textField($model,'measure_id',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->dropDownList($model, 'measure_id', $measures, array('empty'=>'')); ?>
 	</div>
 
 	<div class="row">
@@ -52,12 +52,18 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'create_time'); ?>
-		<?php echo $form->textField($model,'create_time'); ?>
+		<?php $this->widget('DatePicker', array(
+            'model'=>$model,
+            'attribute' => 'create_time',
+        )); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'update_time'); ?>
-		<?php echo $form->textField($model,'update_time'); ?>
+        <?php $this->widget('DatePicker', array(
+            'model'=>$model,
+            'attribute' => 'update_time',
+        )); ?>
 	</div>
 
 	<div class="row buttons">

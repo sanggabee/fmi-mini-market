@@ -50,8 +50,14 @@ class Product extends EActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('category_id, manifacturer_id, measure_id, name, delivery_prize, sell_prize, minimum_quantity', 'required'),
+			array('category_id, manifacturer_id, measure_id, name, delivery_prize, sell_prize, current_quantity, minimum_quantity', 'required'),
 			array('category_id, manifacturer_id, measure_id, delivery_prize, sell_prize, current_quantity, minimum_quantity', 'length', 'max'=>10),
+            array('category_id', 'exist', 'className'=>'Category', 'attributeName' => 'id'),
+            array('manifacturer_id', 'exist', 'className'=>'Manifacturer', 'attributeName' => 'id'),
+            array('measure_id', 'exist', 'className'=>'Measure', 'attributeName' => 'id'),
+            array('delivery_prize, sell_prize, current_quantity, minimum_quantity', 'numerical', 'min'=>0, 'max'=>1000000,),
+            array('delivery_prize', 'compare', 'compareAttribute' => 'sell_prize', 'operator'=>'<', ),
+            array('sell_prize', 'compare', 'compareAttribute' => 'delivery_prize', 'operator'=>'>', ),
 			array('name', 'length', 'max'=>100),
 			array('create_time, update_time', 'safe'),
 			// The following rule is used by search().
@@ -122,4 +128,13 @@ class Product extends EActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    public function behaviors() {
+        return array(
+            'CTimestampBehavior' => array(
+                'class' => 'zii.behaviors.CTimestampBehavior',
+                'setUpdateOnCreate' => true,
+            ),
+        );
+    }
 }
