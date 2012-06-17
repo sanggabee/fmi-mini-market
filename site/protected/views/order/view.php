@@ -16,7 +16,8 @@ $this->menu=array(
         'linkOptions'=>array(
             'submit'=>array('delete','id'=>$model->id),
             'confirm'=>'Are you sure you want to delete this item?',
-        )
+        ),
+        'visible'=>empty($model->orderItems),
     ),
 	array(
         'label'=>'Finish Order', 
@@ -33,7 +34,8 @@ $this->menu=array(
         'linkOptions'=>array(
             'class'=>'order-item-click',
             'rel'=>'Add order item',
-        )
+        ),
+        'visible'=>$model->isNew,
     ),
 );
 ?>
@@ -92,9 +94,11 @@ $this->widget('zii.widgets.grid.CGridView', array(
                         'class'=>'order-item-click',
                         'alt'=>'Update order item',
                     ),
+                    'visible'=>'$data->order->isNew',
                 ),
                 'delete'=>array(
                     'url'=>'Yii::app()->createUrl("orderItem/delete", array("id"=>$data->id));',
+                    'visible'=>'$data->order->isNew',
                 ),
             ),
         ),
@@ -149,7 +153,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
             $.post(link.attr('href'), function(r){
                 alert(r.error == 0 ? 'Success' : r.message);
                 if(r.error == 0)
-                    link.remove();
+                    window.location = window.location.href;
             }, 'json');
             return false;
         });

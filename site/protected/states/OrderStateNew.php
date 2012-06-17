@@ -15,6 +15,9 @@ class OrderStateNew extends OrderState {
     public function finish() {
         $transaction = $this->order->getDbConnection()->beginTransaction();
         try {
+            if(empty($this->order->orderItems))
+                throw new Exception('No items in order');
+            
             foreach($this->order->orderItems as $orderItem) /* @var $orderItem OrderItem */
                 if(!$orderItem->changeProductQuantity())
                     throw new Exception('Can not change product quantity!');
