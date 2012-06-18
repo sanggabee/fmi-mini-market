@@ -1,11 +1,11 @@
 <?php
+/* @var $this Controller */
 $this->breadcrumbs=array(
 	'Orders'=>array('index'),
 	'Manage',
 );
 
 $this->menu=array(
-	array('label'=>'List Order', 'url'=>array('index')),
 	array('label'=>'Create Order', 'url'=>array('create')),
 );
 
@@ -43,17 +43,31 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
-		'type',
-		'user_id',
-		'client_id',
+        array(
+            'name'=>'type',
+            'value'=>'$data->typeName',
+            'filter'=>$model->types,
+        ),
+        array(
+            'name'=>'state',
+            'value'=>'$data->stateName',
+            'filter'=>$model->states,
+        ),
+        array(
+            'name'=>'user_email',
+            'value'=>'$data->user->email',
+        ),
 		'total',
 		'create_time',
-		/*
-		'state',
-		'update_time',
-		*/
+	
 		array(
 			'class'=>'CButtonColumn',
+            'template'=>'{view}{delete}',
+            'buttons'=>array(
+                'delete'=>array(
+                    'visible'=>'$data->canBeDeleted',
+                ),
+            ),
 		),
 	),
 )); ?>

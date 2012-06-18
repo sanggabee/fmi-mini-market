@@ -149,7 +149,7 @@ class Order extends EActiveRecord
 			array('state, user_id, create_time, update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, type, client_id, total', 'safe', 'on'=>'search'),
+			array('id, type, client_id, total, from, to, user_email', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -182,6 +182,10 @@ class Order extends EActiveRecord
 		);
 	}
 
+    public $from;
+    public $to;
+    public $user_email;
+    
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
@@ -191,15 +195,25 @@ class Order extends EActiveRecord
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
 
+        
+        
 		$criteria=new CDbCriteria;
+        $alias = $this->getTableAlias(true, true);
+        $criteria->with = array('user');
+		$criteria->compare($alias.'.id',$this->id,true);
+		$criteria->compare($alias.'.type',$this->type,true);
+		$criteria->compare($alias.'.state',$this->state,true);
+		$criteria->compare($alias.'.total',$this->total,true);
+		$criteria->compare('user.email',$this->user_email,true);
+		$criteria->compare($alias.'.create_time',$this->create_time,true);
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('type',$this->type,true);
-		$criteria->compare('user_id',$this->user_id,true);
-		$criteria->compare('client_id',$this->client_id,true);
-		$criteria->compare('total',$this->total,true);
-		$criteria->compare('create_time',$this->create_time,true);
-
+        if(!empty($this->from ))
+            $criteria->compare($alias.'.create_time', ">=$this->from 00:00:00", true);
+        
+        if(!empty($this->to))
+            $criteria->compare($alias.'.create_time', "<=$this->to 23:59:59", true);
+        
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
@@ -254,5 +268,14 @@ class Order extends EActiveRecord
     
     public function applyStorigeDirection($quota) {
         throw new CException('Implemented in derived class!!!');
+    }
+    
+    /**
+     * Predicate for checking wether the order can be deleted or not.
+     *
+     * @return boolean
+     */
+    public function getCanBeDeleted() {
+        return !OrderItem::model()->forOrder($this)->exists();
     }
 }

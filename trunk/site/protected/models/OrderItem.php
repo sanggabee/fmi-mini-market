@@ -127,4 +127,14 @@ class OrderItem extends EActiveRecord
             'current_quantity' => $changeBy,
         ));
     }
+    
+    /**
+     * Named scope for filtering items for an order.
+     * 
+     * @param Order $order 
+     * @return OrderItem
+     */
+    public function forOrder($order) {
+        return $this->attributeNamedScope('order_id', $order->id);
+    }
 }
