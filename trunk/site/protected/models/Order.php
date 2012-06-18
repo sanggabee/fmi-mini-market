@@ -278,4 +278,16 @@ class Order extends EActiveRecord
     public function getCanBeDeleted() {
         return !OrderItem::model()->forOrder($this)->exists();
     }
+    
+    /**
+     * Stops the delete action if it is not permitted.
+     *
+     * @return boolean
+     */
+    protected function beforeDelete() {
+        if(!$this->canBeDeleted)
+            return false;
+        
+        return parent::beforeDelete();
+    }
 }
