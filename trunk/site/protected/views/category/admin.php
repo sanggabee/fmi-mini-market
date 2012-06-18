@@ -44,11 +44,11 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 
-<?php $this->widget('CategoryStylesWidget'); ?>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'category-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
+    'afterAjaxUpdate' => 'bindGridClickHandlers',
     'rowCssClassExpression' => 'CategoryStylesWidget::getClassNameOfCategory($data);',
 	'columns'=>array(
 		'id',
@@ -79,40 +79,52 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
     'id'=>'category-dialog',
     'options'=>array(
         'draggable'=>true,
-        'title'=>'Order Item Dialog',
+        'title'=>'Category Dialog',
         'autoOpen'=>false,
         'modal' => true,
         'close'=>'js:refreshGrid',
+        'width' => 330,
     ),
 )); ?>
-    <script language="JavaScript">
+    
+
+   
+<?php $this->endWidget(); ?>
+
+<script language="JavaScript">
     function autoResize(id){
         var newheight;
-        var newwidth;
+//        var newwidth;
 
         if(document.getElementById){
             newheight=document.getElementById(id).contentWindow.document .body.scrollHeight;
-            newwidth=document.getElementById(id).contentWindow.document .body.scrollWidth;
+//            newwidth=document.getElementById(id).contentWindow.document .body.scrollWidth;
         }
 
         document.getElementById(id).height= (newheight) + "px";
-        document.getElementById(id).width= (newwidth) + "px";
+//        document.getElementById(id).width= (newwidth) + "px";
+
+        $('#category-dialog').dialog('close').dialog('open');;
     }
-    </script>
-
-    <IFRAME SRC="" width="200px" height="200px" id="category-iframe" marginheight="0" frameborder="0" onLoad="autoResize('category-iframe');"></iframe>
-<?php $this->endWidget(); ?>
-
+    
+    function bindGridClickHandlers()
+    {
+        $('.category-click').click(function(){
+            var link = $(this);
+            var dialog = $('#category-dialog');
+            
+            dialog.html('<IFRAME SRC=\"'+ link.attr('href') +'\" width=\"280\" height=\"20\" id=\"category-iframe\" marginheight=\"0\" frameborder=\"0\" onLoad=\"autoResize(\'category-iframe\');\"></iframe>')
+            dialog.dialog('open');
+            return false;
+        });
+    }
+    
+</script>
+    
 <?php Yii::app()->clientScript
     ->registerScript('category-managment', "
         function refreshGrid(){
             $.fn.yiiGridView.update('category-grid');
         }
-        $('.category-click').click(function(){
-            var link = $(this);
-            var dialog = $('#category-dialog');
-            $('#category-iframe').attr('src', link.attr('href'));
-            dialog.dialog('open');
-            return false;
-        });
+        bindGridClickHandlers();
     ", CClientScript::POS_READY); ?>
