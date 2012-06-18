@@ -42,6 +42,8 @@ $this->menu=array(
 
 <h1>View Order #<?php echo $model->id; ?></h1>
 
+
+
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
@@ -59,16 +61,21 @@ $this->menu=array(
 		'update_time',
 	),
 )); ?>
-
+<?php $this->widget('CategoryStylesWidget'); ?>
 <?php $provider=$item->search();
 $this->widget('zii.widgets.grid.CGridView', array(
     'id' => 'order-items-grid',
     'dataProvider' => $provider,
     'afterAjaxUpdate' => 'rebindOrderItemButtons',
+    'rowCssClassExpression' => 'CategoryStylesWidget::getClassNameOfCategory($data->product->category);',
     'columns'=>array(
         array(
             'name' =>'N',
             'value' => '$row+1',
+        ),
+        array(
+            'class'=>'CLinkColumn',
+            'labelExpression'=>'CHtml::image($data->product->category->pictureUrl, "", array("width"=>50))',
         ),
         array(
             'name' => 'product_id',
