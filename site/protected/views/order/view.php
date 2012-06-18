@@ -61,7 +61,7 @@ $this->menu=array(
 		'update_time',
 	),
 )); ?>
-<?php $this->widget('CategoryStylesWidget'); ?>
+
 <?php $provider=$item->search();
 $this->widget('zii.widgets.grid.CGridView', array(
     'id' => 'order-items-grid',

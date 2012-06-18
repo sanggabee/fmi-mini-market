@@ -8,7 +8,7 @@
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'category-form',
 	'enableAjaxValidation'=>true,
-    'focus'=>array($model, 'name'),
+//    'focus'=>array($model, 'name'),
     'htmlOptions' => array(
         'enctype' => 'multipart/form-data'
     ),
@@ -20,7 +20,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'name'); ?>
-		<?php echo $form->textField($model,'name',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'name',array('maxlength'=>45)); ?>
 		<?php echo $form->error($model,'name'); ?>
 	</div>
 
@@ -44,3 +44,8 @@
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
+<br />
+<br />
+<br />
+<br />
+<br />
