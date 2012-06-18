@@ -152,5 +152,9 @@ class User extends EActiveRecord
         return sha1(Yii::app()->params['userSalt'].$password);
     }
     
+    public function getListData() {
+        return $this->getListDataHelper('id', 'email');
+    }
+    
     
 }

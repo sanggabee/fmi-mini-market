@@ -20,8 +20,8 @@ class EActiveRecord extends CActiveRecord {
         $alias = $this->getTableAlias(true, true);
         $column = $this->getDbConnection()->quoteColumnName($attribute);
         $this->getDbCriteria()->mergeWith(new CDbCriteria(array(
-            'condition' => "$alias.$column=:$attribue",
-            'params' => array(":$attribue" => $value),
+            'condition' => "$alias.$column=:$attribute",
+            'params' => array(":$attribute" => $value),
         )));
         return $this;
     }
