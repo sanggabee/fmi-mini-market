@@ -39,12 +39,18 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 
+<?php $this->widget('CategoryStylesWidget'); ?>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'product-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
+    'rowCssClassExpression' => 'CategoryStylesWidget::getClassNameOfCategory($data->category);',
 	'columns'=>array(
 		'id',
+        array(
+            'class'=>'CLinkColumn',
+            'labelExpression'=>'CHtml::image($data->category->pictureUrl, "", array("width"=>50))',
+        ),
         array(
             'name' => 'category_id',
             'value' => '$data->category->name',

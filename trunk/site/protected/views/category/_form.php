@@ -8,6 +8,7 @@
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'category-form',
 	'enableAjaxValidation'=>true,
+    'focus'=>array($model, 'name'),
     'htmlOptions' => array(
         'enctype' => 'multipart/form-data'
     ),

@@ -48,6 +48,7 @@ class CategoryController extends Controller
 	 */
 	public function actionCreate()
 	{
+        $this->layout = '//layouts/empty';
 		$model=new Category;
 
 		// Uncomment the following line if AJAX validation is needed
@@ -88,6 +89,7 @@ class CategoryController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+        $this->layout = '//layouts/empty';
 		$model=$this->loadModel($id);
 
 		$this->performAjaxValidation($model);
