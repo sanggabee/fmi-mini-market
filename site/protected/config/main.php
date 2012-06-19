@@ -79,5 +79,6 @@ return array(
         'uploadsDirectory' => 'uploads',
         'dbDateFormat'=>'Y-m-d H:i:s',
         'currency' => 'лв.',
+        'author' => 'Nikolay Dobormirov',
 	),
 );
