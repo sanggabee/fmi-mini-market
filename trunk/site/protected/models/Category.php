@@ -154,7 +154,8 @@ class Category extends EActiveRecord
     
     public function beforeValidate() {
         if(in_array($this->scenario, array('insert', 'update')))
-            $this->picture = CUploadedFile::getInstance($this, 'picture');
+            if(($file = CUploadedFile::getInstance($this, 'picture')) !== null)
+                $this->picture = $file;
         
         return parent::beforeValidate();
     }
