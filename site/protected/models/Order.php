@@ -290,4 +290,30 @@ class Order extends EActiveRecord
         
         return parent::beforeDelete();
     }
+    
+    /**
+     * Filters the orders by a specified state.
+     *
+     * @param integer $state One of STATE_* constants.
+     * @return Order
+     */
+    public function inState($state) {
+        return $this->attributeNamedScope('state', $state);
+    }
+    
+    /**
+     *
+     * @return type 
+     */
+    public function getOverallTotal() {
+        if(get_class($this) == 'Order')
+            throw new CException('Do not use on base class Order! Behaviour is undefined!');
+
+        $orders = $this->inState(self::STATE_FINISHED)->findAll();
+        $sum = 0;
+        foreach($orders as $order) /* @var $order Order */
+            $sum += $order->total;
+        
+        return $sum;
+    }
 }
