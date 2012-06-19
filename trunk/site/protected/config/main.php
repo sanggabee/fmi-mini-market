@@ -78,5 +78,6 @@ return array(
         'userSalt' => 'asdj(&^YOjsfhipawfliuhLIUYlgf92felHOg',
         'uploadsDirectory' => 'uploads',
         'dbDateFormat'=>'Y-m-d H:i:s',
+        'currency' => 'лв.',
 	),
 );

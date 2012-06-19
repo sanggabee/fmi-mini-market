@@ -137,4 +137,12 @@ class Product extends EActiveRecord
             ),
         );
     }
+    
+    public function getActives() {
+        return $this->getDbConnection()
+                    ->createCommand()
+                    ->select('sum(sell_prize * current_quantity)')
+                    ->from($this->tableName())
+                    ->queryScalar();
+    }
 }

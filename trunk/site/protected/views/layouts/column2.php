@@ -10,11 +10,21 @@
 		$this->beginWidget('zii.widgets.CPortlet', array(
 			'title'=>'Operations',
 		));
-		$this->widget('zii.widgets.CMenu', array(
-			'items'=>$this->menu,
-			'htmlOptions'=>array('class'=>'operations'),
-		));
+            $this->widget('zii.widgets.CMenu', array(
+                'items'=>$this->menu,
+                'htmlOptions'=>array('class'=>'operations'),
+            ));
 		$this->endWidget();
+        
+        if(!Yii::app()->user->isGuest)
+        {
+            $this->beginWidget('zii.widgets.CPortlet', array(
+                'title'=>'Case',
+            ));
+                $this->widget('StoreCase');
+            $this->endWidget();
+        }
+            
 	?>
 	</div><!-- sidebar -->
 </div>
