@@ -175,12 +175,7 @@ class Category extends EActiveRecord
         if($this->save())
             $this->_deletePicture();
     }
-    protected function beforeDelete() {
-        if(!$this->canBeDeleted)
-            return false;
-        
-        return parent::beforeDelete();
-    }
+    
     /**
      * 
      */

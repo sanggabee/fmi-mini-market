@@ -62,4 +62,25 @@ class EActiveRecord extends CActiveRecord {
             foreach($fieldErrors as $error)
                 $this->addError($attribute, $error);
     }
+    
+    /**
+     * Chack wether the curent AR instance can be deleted or not.
+     *
+     * @return boolean Allow flag.
+     */
+    public function getCanBeDeleted(){
+        return true;
+    }
+    
+    /**
+     * Before-delete hook
+     *
+     * @return type 
+     */
+    protected function beforeDelete() {
+        if(!$this->canBeDeleted)
+            return false;
+        
+        return parent::beforeDelete();
+    }
 }

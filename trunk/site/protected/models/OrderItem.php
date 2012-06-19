@@ -147,4 +147,8 @@ class OrderItem extends EActiveRecord
     public function forProduct($product) {
         return $this->attributeNamedScope('product_id', $product->id);
     }
+    
+    public function getCanBeDeleted() {
+        return $this->order->isNew;
+    }
 }

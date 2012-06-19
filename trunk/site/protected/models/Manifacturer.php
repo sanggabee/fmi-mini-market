@@ -88,4 +88,8 @@ class Manifacturer extends EActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    public function getCanBeDeleted() {
+        return !Product::model()->forManifacturer($this)->exists();
+    }
 }

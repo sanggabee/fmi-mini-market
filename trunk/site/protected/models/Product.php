@@ -138,6 +138,12 @@ class Product extends EActiveRecord
         );
     }
     
+    /**
+     * Calculates the actives in products.
+     * Sum of all products: sell prize * current quantity
+     * 
+     * @return float Calculated actives
+     */
     public function getActives() {
         return $this->getDbConnection()
                     ->createCommand()
@@ -155,10 +161,33 @@ class Product extends EActiveRecord
         return !OrderItem::model()->forProduct($this)->exists();
     }
     
-    protected function beforeDelete() {
-        if(!$this->canBeDeleted)
-            return false; // Disable deletition
-        
-        return parent::beforeDelete();
+    /**
+     * Filters the products for a specified category.
+     *
+     * @param Category $category
+     * @return Product
+     */
+    public function forCategory($category) {
+        return $this->attributeNamedScope('category_id', $category->id);
+    }
+    
+    /**
+     * Filters the products for a specified manifacturer.
+     *
+     * @param Manifacturer $manifacturer
+     * @return Product
+     */
+    public function forManifacturer($manifacturer) {
+        return $this->attributeNamedScope('manifacturer_id', $manifacturer->id);
+    }
+    
+    /**
+     * Filters the priducts for a specified measure.
+     *
+     * @param Measure $measure
+     * @return Product 
+     */
+    public function forMeasure($measure) {
+        return $this->attributeNamedScope('measure_id', $measure->id);
     }
 }

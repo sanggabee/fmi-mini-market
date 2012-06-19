@@ -280,18 +280,6 @@ class Order extends EActiveRecord
     }
     
     /**
-     * Stops the delete action if it is not permitted.
-     *
-     * @return boolean
-     */
-    protected function beforeDelete() {
-        if(!$this->canBeDeleted)
-            return false;
-        
-        return parent::beforeDelete();
-    }
-    
-    /**
      * Filters the orders by a specified state.
      *
      * @param integer $state One of STATE_* constants.
@@ -299,6 +287,16 @@ class Order extends EActiveRecord
      */
     public function inState($state) {
         return $this->attributeNamedScope('state', $state);
+    }
+    
+    /**
+     * Filters the orders added by a given user
+     *
+     * @param User $user
+     * @return Order 
+     */
+    public function forUser($user) {
+        return $this->attributeNamedScope('user_id', $user->id);
     }
     
     /**
