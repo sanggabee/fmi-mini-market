@@ -9,16 +9,6 @@ $this->breadcrumbs=array(
 
 $this->menu=array(
 	array('label'=>'Manage Orders', 'url'=>array('admin')),
-	array('label'=>'Create Order', 'url'=>array('create')),
-	array(
-        'label'=>'Delete Order', 
-        'url'=>'javascript:;', 
-        'linkOptions'=>array(
-            'submit'=>array('delete','id'=>$model->id),
-            'confirm'=>'Are you sure you want to delete this item?',
-        ),
-        'visible'=>empty($model->orderItems),
-    ),
 	array(
         'label'=>'Finish Order', 
         'url'=>array('finish', 'id'=>$model->id), 
@@ -62,11 +52,17 @@ $this->menu=array(
 	),
 )); ?>
 
+<?php $dialogForm = $this->widget('application.widgets.dialogform.DialogFormWidget', array(
+    'linkSelector' => '.order-item-click',
+    'gridId' => 'order-items-grid',
+    'formId' => 'order-item-form',
+)); ?>
+
 <?php $provider=$item->search();
 $this->widget('zii.widgets.grid.CGridView', array(
     'id' => 'order-items-grid',
     'dataProvider' => $provider,
-    'afterAjaxUpdate' => 'rebindOrderItemButtons',
+    'afterAjaxUpdate' => $dialogForm->afterAjaxReloadFunction,
     'rowCssClassExpression' => 'CategoryStylesWidget::getClassNameOfCategory($data->product->category);',
     'columns'=>array(
         array(
@@ -112,56 +108,14 @@ $this->widget('zii.widgets.grid.CGridView', array(
     ),
 )); ?>
 
-<?php $this->widget('zii.widgets.jui.CJuiDialog', array(
-    'id'=>'order-item-dialog',
-    'options'=>array(
-        'title'=>'Order Item Dialog',
-        'autoOpen'=>false,
-        'modal' => true,
-    ),
-)); ?>
-
-<?php Yii::app()->clientScript
-    ->registerScript('buttons-rebind-function',"
-        function refreshGrid(){
-            $.fn.yiiGridView.update('order-items-grid');
-        }
-        function rebindOrderItemButtons(){
-            $('.order-item-click').click(function(){
-                var dialog = $('#order-item-dialog');
-                var link = $(this);
-                $.get(link.attr('href'), function(html){
-                    dialog.html(html);
-                    dialog.dialog('option', 'title', link.attr('alt'));
-                    function bindOrderItemFormButton(){
-                        $('#order-item-form').submit(function(){
-                            var form = $(this);
-                            $.post(form.attr('action'), form.serialize(), function(html){
-                                dialog.html(html);
-                                bindOrderItemFormButton();
-                                refreshGrid();
-                            });
-                            return false;
-                        });
-                    }
-                    bindOrderItemFormButton();
-                    dialog.dialog('open');
-                });
-                return false;
-            });
-        }
-        
-        ", CClientScript::POS_HEAD)
-    ->registerScript('manageDialog', "
-        rebindOrderItemButtons();
-        
-        $('.finish-link').click(function(){
-            var link = $(this);
-            $.post(link.attr('href'), function(r){
-                alert(r.error == 0 ? 'Success' : r.message);
-                if(r.error == 0)
-                    window.location = window.location.href;
-            }, 'json');
-            return false;
-        });
-    ", CClientScript::POS_READY); ?>
+<?php Yii::app()->clientScript->registerScript('order-finish-handling', "        
+    $('.finish-link').click(function(){
+        var link = $(this);
+        $.post(link.attr('href'), function(r){
+            alert(r.error == 0 ? 'Success' : r.message);
+            if(r.error == 0)
+                window.location = window.location.href; // Refresh
+        }, 'json');
+        return false;
+    });
+", CClientScript::POS_READY); ?>
