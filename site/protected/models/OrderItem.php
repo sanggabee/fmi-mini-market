@@ -137,4 +137,14 @@ class OrderItem extends EActiveRecord
     public function forOrder($order) {
         return $this->attributeNamedScope('order_id', $order->id);
     }
+    
+    /**
+     * Named scope for filtering items for an product.
+     * 
+     * @param Product $order 
+     * @return OrderItem
+     */
+    public function forProduct($product) {
+        return $this->attributeNamedScope('product_id', $product->id);
+    }
 }

@@ -5,7 +5,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Create Product', 'url'=>array('create')),
+	array('label'=>'Create Product', 'url'=>array('create'), 'linkOptions'=>array('class'=>'product-click')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -39,10 +39,17 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 
+<?php $dialogForm = $this->widget('application.widgets.dialogform.DialogFormWidget', array(
+    'linkSelector' => '.product-click',
+    'gridId' => 'product-grid',
+    'formId' => 'product-form',
+)); ?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'product-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
+    'afterAjaxUpdate' => $dialogForm->afterAjaxReloadFunction,
     'rowCssClassExpression' => 'CategoryStylesWidget::getClassNameOfCategory($data->category);',
 	'columns'=>array(
 		'id',
@@ -73,6 +80,17 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		array(
 			'class'=>'CButtonColumn',
             'template'=>'{update}{delete}',
+            'buttons'=>array(
+                'delete'=>array(
+                    'visible'=>'$data->canBeDeleted',
+                ),
+                'update'=>array(
+                    'options'=>array(
+                        'class'=>'product-click',
+                    ),
+                ),
+            ),
 		),
 	),
 )); ?>
+

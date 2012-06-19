@@ -37,6 +37,7 @@ class ProductController extends Controller
 	 */
 	public function actionCreate()
 	{
+        $this->layout = false;
 		$model=new Product;
 		$this->performAjaxValidation($model);
         
@@ -53,7 +54,7 @@ class ProductController extends Controller
             }
 		}
         
-        $this->render('create', array_merge($this->getNeededDataLists(), array(
+        $this->render('_form', array_merge($this->getNeededDataLists(), array(
 			'model'=>$model,
 		)));
 	}
@@ -65,6 +66,7 @@ class ProductController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+        $this->layout = false;
 		$model=$this->loadModel($id);
 
 		$this->performAjaxValidation($model);
@@ -82,7 +84,7 @@ class ProductController extends Controller
             }
 		}
 
-		$this->render('update', array_merge($this->getNeededDataLists(), array(
+		$this->render('_form', array_merge($this->getNeededDataLists(), array(
 			'model'=>$model,
 		)));
 	}

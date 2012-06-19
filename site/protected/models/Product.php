@@ -145,4 +145,20 @@ class Product extends EActiveRecord
                     ->from($this->tableName())
                     ->queryScalar();
     }
+    
+    /**
+     * Checks wether the current AR product instance can be deleted.
+     *
+     * @return type 
+     */
+    public function getCanBeDeleted(){
+        return !OrderItem::model()->forProduct($this)->exists();
+    }
+    
+    protected function beforeDelete() {
+        if(!$this->canBeDeleted)
+            return false; // Disable deletition
+        
+        return parent::beforeDelete();
+    }
 }
