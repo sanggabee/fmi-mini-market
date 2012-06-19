@@ -68,43 +68,27 @@ class OrderController extends Controller
 	 */
 	public function actionCreate()
 	{
+        $this->layout = false;
 		$model=new Order;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Order']))
-		{
-			$model->attributes=$_POST['Order'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
-		}
-
-		$this->render('create',array(
-			'model'=>$model,
-		));
-	}
-
-	/**
-	 * Updates a particular model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param integer $id the ID of the model to be updated
-	 */
-	public function actionUpdate($id)
-	{
-		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+        
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Order']))
 		{
 			$model->attributes=$_POST['Order'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+            {
+                $this->render('_form_success', array(
+                    'model'=>$model,
+                    'message' => Yii::t('app', 'Successfuly created {item_name}!', array(
+                        '{item_name}' => Yii::t('app', 'order'),
+                    )),
+                ));
+                return;
+            }
 		}
 
-		$this->render('update',array(
+		$this->render('_form',array(
 			'model'=>$model,
 		));
 	}

@@ -48,6 +48,7 @@ class ManifacturerController extends Controller
 	 */
 	public function actionCreate()
 	{
+        $this->layout = false;
 		$model=new Manifacturer;
 		
         $this->performAjaxValidation($model);
@@ -64,7 +65,7 @@ class ManifacturerController extends Controller
             }
 		}
 
-		$this->render('create',array(
+		$this->render('_form',array(
 			'model'=>$model,
 		));
 	}
@@ -76,6 +77,7 @@ class ManifacturerController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+        $this->layout = false;
 		$model=$this->loadModel($id);
 		
         $this->performAjaxValidation($model);
@@ -92,7 +94,7 @@ class ManifacturerController extends Controller
             }
 		}
 
-		$this->render('update',array(
+		$this->render('_form',array(
 			'model'=>$model,
 		));
 	}

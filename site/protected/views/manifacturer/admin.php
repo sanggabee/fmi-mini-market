@@ -5,7 +5,14 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Create Manifacturer', 'url'=>array('create')),
+	array(
+        'label'=>'Create Manifacturer', 
+        'url'=>array('create'), 
+        'linkOptions'=>array(
+            'class'=>'manifacturer-click',
+            'alt'=>'Create manifacturer',
+        ),
+    ),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -36,16 +43,34 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 
+<?php $dialogForm = $this->widget('application.widgets.dialogform.DialogFormWidget', array(
+    'linkSelector' => '.manifacturer-click',
+    'gridId' => 'manifacturer-grid',
+    'formId' => 'manifacturer-form',
+)); ?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'manifacturer-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
+    'afterAjaxUpdate' => $dialogForm->afterAjaxReloadFunction,
 	'columns'=>array(
 		'id',
 		'name',
 		array(
 			'class'=>'CButtonColumn',
             'template'=>'{update}{delete}',
+            'buttons'=>array(
+                'delete'=>array(
+                    'visible'=>'$data->canBeDeleted',
+                ),
+                'update'=>array(
+                    'options'=>array(
+                        'class' => 'manifacturer-click',
+                        'alt'=>'Update manifacturer',
+                    ),
+                ),
+            ),
 		),
 	),
 )); ?>

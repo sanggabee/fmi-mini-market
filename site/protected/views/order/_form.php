@@ -1,6 +1,8 @@
 <?php /* @var $model Order */ ?>
 <div class="form">
 
+<?php $this->widget('FlashMessage',array('key'=>'success')); ?>    
+    
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'order-form',
 	'enableAjaxValidation'=>false,

@@ -6,7 +6,14 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Create Order', 'url'=>array('create')),
+	array(
+        'label'=>'Create Order', 
+        'url'=>array('create'), 
+        'linkOptions'=>array(
+            'class'=>'order-click',
+            'alt'=>'Create order',
+        ),
+    ),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -37,10 +44,17 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 
+<?php $dialogForm = $this->widget('application.widgets.dialogform.DialogFormWidget', array(
+    'linkSelector' => '.order-click',
+    'gridId' => 'order-grid',
+    'formId' => 'order-form',
+)); ?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'order-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
+    'afterAjaxUpdate' => $dialogForm->afterAjaxReloadFunction,
 	'columns'=>array(
 		'id',
         array(
@@ -67,6 +81,12 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
                 'delete'=>array(
                     'visible'=>'$data->canBeDeleted',
                 ),
+                'update'=>array(
+                    'options'=>array(
+                        'class' => 'order-click',
+                        'alt'=>'Update order',
+                    ),
+                ),    
             ),
 		),
 	),
