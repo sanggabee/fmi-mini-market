@@ -91,4 +91,8 @@ class Measure extends EActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    public function getCanBeDeleted() {
+        return !Product::model()->forMeasure($this)->exists();
+    }
 }

@@ -5,7 +5,14 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Create Product', 'url'=>array('create'), 'linkOptions'=>array('class'=>'product-click')),
+	array(
+        'label'=>'Create Product', 
+        'url'=>array('create'), 
+        'linkOptions'=>array(
+            'class'=>'product-click',
+            'alt' =>'Create product'
+        ),
+    ),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -87,6 +94,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
                 'update'=>array(
                     'options'=>array(
                         'class'=>'product-click',
+                        'alt'=>'Update product',
                     ),
                 ),
             ),

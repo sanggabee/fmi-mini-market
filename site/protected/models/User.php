@@ -156,5 +156,7 @@ class User extends EActiveRecord
         return $this->getListDataHelper('id', 'email');
     }
     
-    
+    public function getCanBeDeleted() {
+        return !Order::model()->forUser($this)->exists();
+    }
 }
